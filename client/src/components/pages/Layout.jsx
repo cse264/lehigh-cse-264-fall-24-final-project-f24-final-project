@@ -14,12 +14,12 @@ export default function Layout() {
   return (
     <div className="flex flex-col min-h-screen">
       <header className="p-4 bg-gradient-to-r from-emerald-500 via-emerald-300 to-emerald-500 text-white">
-        <div className="container mx-auto flex justify-between">
-          <Link to="/home" className="flex items-center space-x-2">
+        <div className="mx-auto flex items-center justify-between" >
+          <Link to="/home" className="flex items-center space-x-2 ">
             <Sprout className="h-6 w-6" />
             <span className="text-xl font-bold">PlantPal</span>
           </Link>
-          <NavigationMenu className="lg:flex space-x-4">
+          <NavigationMenu className="flex space-x-4">
             {navItems.map((item) => (
               <Button
                 as={Link}
