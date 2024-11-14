@@ -14,7 +14,7 @@ export default function Layout() {
   return (
     <div className="flex flex-col min-h-screen">
       <header className="p-4 bg-gradient-to-r from-emerald-500 via-emerald-300 to-emerald-500 text-white">
-        <div className="mx-auto flex items-center justify-between" >
+        <div className="container mx-auto flex items-center justify-between" >
           <Link to="/home" className="flex items-center space-x-2 ">
             <Sprout className="h-6 w-6" />
             <span className="text-xl font-bold">PlantPal</span>
@@ -39,7 +39,7 @@ export default function Layout() {
           </NavigationMenu>
         </div>
       </header>
-      <main className="flex-1">
+      <main className="container flex-1">
         <Outlet />
       </main>
       <footer className="p-4 bg-gradient-to-r from-emerald-500 via-emerald-300 to-emerald-500  text-center text-white">
