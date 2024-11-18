@@ -3,6 +3,7 @@ import Layout from "./components/pages/Layout";
 import About from "./components/pages/About";
 import Home from "./components/pages/Home";
 import Login from "./components/pages/Login";
+import Search from "./components/pages/Search"
 import { Toaster } from "@/components/ui/toaster";
 
 
@@ -14,6 +15,7 @@ export default function App() {
         <Route path="/" element={<Layout />}>
           <Route path="home" element={<Home />} />
           <Route path="about" element={<About />} />
+          <Route path="search" element={<Search />} />
           <Route path="/*" element={<NoMatch />} />
         </Route>
       </Routes>

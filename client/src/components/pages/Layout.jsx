@@ -9,6 +9,7 @@ export default function Layout() {
   const navItems = [
     { name: 'Home', href: '/home' },
     { name: 'About', href: '/about' },
+    { name: 'Search', href: '/search' },
   ];
 
   return (
