@@ -3,12 +3,12 @@ import { Link, Outlet } from 'react-router-dom';
 import { Sprout, Menu } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { NavigationMenu } from "@/components/ui/navigation-menu";
+import { Toaster } from "@/components/ui/toaster";
 
 export default function Layout() {
   const navItems = [
     { name: 'Home', href: '/home' },
     { name: 'About', href: '/about' },
-    { name: 'Plants', href: '/plants' },
   ];
 
   return (
@@ -42,6 +42,7 @@ export default function Layout() {
       <main className="container flex-1">
         <Outlet />
       </main>
+      <Toaster />
       <footer className="p-4 bg-gradient-to-r from-emerald-500 via-emerald-300 to-emerald-500  text-center text-white">
         &copy; {new Date().getFullYear()} PlantPal. All rights reserved.
       </footer>
