@@ -35,8 +35,8 @@ export default function Home() {
     });
   };
   return (
-    <div className="flex-row items-start">
-      <div className="pl-4 flex flex-col items-start">
+    <div className="flex-row items-center justify-center w-screen bg-gradient-to-br from-pink-300 via-emerald-100 to-blue-300 p-6">
+      <div className="flex flex-col items-center justify-center space-y-6">
         {plantItems.map((plant, index) => (
           <Card key={index}>
             <CardHeader>
