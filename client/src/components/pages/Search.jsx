@@ -3,7 +3,7 @@ import { Search } from "lucide-react";
 
 export default function SearchPage() {
   return (
-    <div className="flex flex-col items-center  h-screen w-screen bg-gradient-to-br from-pink-300 via-emerald-100 to-blue-300 p-6">
+    <div className="flex flex-col items-center  h-screen w-screen bg-gradient-to-br from-pink-200 via-emerald-100 to-blue-200 p-6">
       <h1 className="text-3xl font-bold text-pink-400 mb-4">🌸 Find Your Plant 🌿</h1>
       <div className="relative w-full max-w-md">
         <Input

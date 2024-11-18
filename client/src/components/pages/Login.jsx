@@ -12,7 +12,7 @@ export default function Login() {
       console.log('Error',error)
     }
     return (
-      <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-emerald-100 via-emerald-400 to-emerald-100"> 
+      <div className="flex justify-center items-center min-h-screen  bg-gradient-to-br from-pink-200 via-emerald-100 to-blue-200"> 
         <div className="bg-white rounded-lg shadow-lg min-h-96 min-w-80 flex flex-col items-center justify-center">
           <h1 className="text-2xl font-semibold font-mono">PlantPal</h1>
           <Sprout className="h-12 w-12 mt-2 fill-emerald-200" color="#059669"/>
