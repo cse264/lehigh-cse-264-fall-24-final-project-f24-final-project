@@ -18,7 +18,7 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground hover:bg-secondary/80 bg-amber-300",
         ghost: "hover:bg-accent hover:text-accent-foreground hover:text-emerald-300",
         link: "text-primary underline-offset-4 hover:underline",
-        water: "bg-sky-300 text-white hover:bg-accent hover:text-accent-foreground hover:text-sky-400",
+        water: "bg-sky-300 text-white hover:bg-accent hover:text-accent-foreground hover:text-sky-400 transition-colors",
         tips: "bg-emerald-500 text-white hover:bg-accent hover:text-accent-foreground hover:text-emerald-300"
       },
       size: {
