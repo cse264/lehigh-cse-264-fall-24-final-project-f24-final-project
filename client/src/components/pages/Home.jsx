@@ -11,25 +11,19 @@ import { Button } from "../ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 
-const getFillPercentage = (rating) => `${(rating / 4) * 100}`;
-
 export default function Home() {
   const { toast } = useToast();
   const [plantItems, setPlantItems] = useState(initialPlantItems);
   const onWater = (index) => {
     setPlantItems((prevItems) =>
       prevItems.map((plant, i) =>
-        i === index
-          ? {
-              ...plant,
-              health: "Excellent",
-              health_rating: 4,
-            }
+        i === index && plant.water_done < plant.water_frequency
+          ? { ...plant, water_done: plant.water_done + 1 }
           : plant
       )
     );
     toast({
-      description: "Your plant has been watered successfully💧",
+      description: "Your plant has been watered successfully 💧",
       duration: 2000,
       variant: "water",
     });
@@ -38,38 +32,39 @@ export default function Home() {
     <div className="flex-row items-center justify-center w-screen bg-gradient-to-br from-pink-200 via-emerald-100 to-blue-200 p-6">
       <div className="flex flex-col items-center justify-center space-y-6">
         {plantItems.map((plant, index) => (
-          <Card key={index}>
+         <Card key={index}>
             <CardHeader>
               <CardTitle>{plant.species}</CardTitle>
-              <CardDescription>Health: {plant.health}</CardDescription>
+              <CardDescription>Health: {plant.plant_health}</CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col items-center justify-center">
-              <div className="relative w-[100px] h-[100px]">
-                {/* Empty Background Icon */}
-                <Flower2
-                  size={100}
-                  className="absolute text-gray-300"
-                  aria-hidden="true"
-                />
-                {/* Filled Area */}
-                <div
-                  className="absolute inset-0 overflow-hidden"
-                  style={{
-                    clipPath: `polygon(50% ${100 - getFillPercentage(plant.health_rating)}%, 100% ${100 - getFillPercentage(plant.health_rating)}%, 100% 100%, 0 100%, 0 ${100 - getFillPercentage(plant.health_rating)}%)`,
-                  }}
-                >
-                  <Flower2 size={100} className="text-emerald-500" />
-                </div>
+              <div className="flex space-x-2 justify-center">
+                {Array.from({ length: plant.water_frequency }).map((_, i) => (
+                  <Flower2
+                    key={i}
+                    size={70}
+                    className={`${
+                      i < plant.water_done ? "text-green-500" : "text-gray-300"
+                    }`}
+                  />
+                ))}
               </div>
               <p className="mt-4 text-center">
+                <strong>Watering Progress:</strong>{" "}{plant.water_done}/{plant.water_frequency}
+              </p>
+              <p className="text-center">
                 <strong>Sunlight:</strong> {plant.sunlight}
               </p>
               <p className="text-center">
-                <strong>Watering:</strong> {plant.watering_general_benchmark}
+                <strong>Watering:</strong> {plant.water_frequency} times a week
               </p>
             </CardContent>
             <CardFooter className="space-x-5">
-              <Button variant="water" onClick={() => onWater(index)}>
+            <Button
+                variant="water"
+                onClick={() => onWater(index)}
+                disabled={plant.water_done >= plant.water_frequency}
+              >
                 Water
               </Button>
               <Button variant="tips">Plant Tips</Button>
@@ -84,30 +79,26 @@ export default function Home() {
 const initialPlantItems = [
   {
     species: "Fern",
-    health: "Good",
-    health_rating: 3,
-    sunlight: "Partial shade",
-    watering_general_benchmark: "1-2 times weekly",
+    water_frequency: 2,
+    water_done: 1,
+    plant_health: "Fair"
   },
   {
     species: "Cactus",
-    health: "Fair",
-    health_rating: 2,
-    sunlight: "Full sun",
-    watering_general_benchmark: "Once every two weeks",
+    water_frequency: 3,
+    water_done: 2,
+    plant_health: "Good"
   },
   {
     species: "Aloe Vera",
-    health: "Bad",
-    health_rating: 1,
-    sunlight: "Bright, indirect light",
-    watering_general_benchmark: "1-2 times monthly",
+    water_frequency: 4,
+    water_done: 2,
+    plant_health: "Fair"
   },
   {
     species: "Sunflower",
-    health: "Excellent",
-    health_rating: 4,
-    sunlight: "Full sun",
-    watering_general_benchmark: "2-3 times weekly during blooming season",
+    water_frequency: 2,
+    water_done: 1,
+    plant_health: "Good"
   },
 ];
