@@ -9,3 +9,9 @@ Currently, two official plugins are available:
 
 
 https://www.youtube.com/watch?v=ChjoKSNWiBo&t=449s
+
+
+How to run: 
+
+npm install
+npm run dev 
