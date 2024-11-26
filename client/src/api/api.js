@@ -1,7 +1,7 @@
+import axios from 'axios'
 // API Requests
 
 // Search bar get request
-
 
 // Get User information from database
 
