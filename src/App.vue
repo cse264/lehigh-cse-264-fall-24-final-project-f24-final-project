@@ -1,9 +1,4 @@
 <template>
-  <img 
-    alt="WeatherWise logo" 
-    src="./assets/logo.png"
-    :style="{width: '200px', height: 'auto'}"
-  />
   <SearchPage msg="Welcome to Your Vue.js App"/>
 </template>
 
