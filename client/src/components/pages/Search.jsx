@@ -3,6 +3,7 @@ import axios from "axios";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
+import { addPlant } from "@/api/api";
 
 export default function SearchPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -11,14 +12,17 @@ export default function SearchPage() {
   const [containerHeight, setContainerHeight] = useState("auto");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
+  const id = localStorage.getItem('id');  // Get user ID from localStorage
   useEffect(() => {
     const token = localStorage.getItem('auth_token');
     if (!token) {
-      navigate('/');  
+      navigate('/');  // Redirect to login if not authenticated
     } else {
       setIsAuthenticated(true); 
     }
   }, [navigate]);
+
+  // Handle search and fetch plant data from the API
   const handleSearch = async () => {
     if (!searchTerm.trim()) return;
     setLoading(true);
@@ -36,6 +40,23 @@ export default function SearchPage() {
       setLoading(false);
     }
   };
+
+  // Handle adding plant to the user's list
+  const handleAddPlant = async (plantId, common_name) => {
+    if (!id) {
+      alert('User not authenticated. Please log in.');
+      return;
+    }
+    try {
+      await addPlant({ id, plantId, common_name });  // Send data to the backend
+      alert(`${common_name} has been added to your list!`);
+    } catch (error) {
+      console.error('Error adding plant:', error);
+      alert('Failed to add plant. Please try again.');
+    }
+  };
+
+  // Adjust container height based on plant list length
   useEffect(() => {
     if (plants.length > 0) {
       setContainerHeight("auto");
@@ -77,6 +98,12 @@ export default function SearchPage() {
               <p className="text-sm text-gray-500">
                 {plant.scientific_name ? `Scientific Name: ${plant.scientific_name}` : "No scientific name available."}
               </p>
+              <button
+                onClick={() => handleAddPlant(plant.id, plant.common_name)}
+                className="mt-2 px-4 py-2 bg-emerald-500 text-white rounded-md hover:bg-emerald-600"
+              >
+                Add to My Plants
+              </button>
             </div>
           ))
         ) : (
@@ -88,6 +115,3 @@ export default function SearchPage() {
     <div>Loading...</div>
   );
 }
-
-
-//"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",

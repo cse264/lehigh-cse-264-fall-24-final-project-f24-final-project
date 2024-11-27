@@ -14,6 +14,11 @@ app.use(express.json());
 const { OAuth2Client } = require('google-auth-library');
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
+let plantsList = [];
+const water_frequency = 1;
+const water_done = 0;
+const plant_health = 'Fair';
+
 app.get("/api", (req, res) => {
     res.json({plantTest: ["fern", "flower", "weed"]});
 });
@@ -39,10 +44,46 @@ app.post('/login', async (req, res) => {
     }
 });
 
+app.post('/plants', async (req, res) => {
+    const { id, plantId, common_name, water_frequency = 1, water_done = 0 , plant_health = "Good" } = req.body;
+    const parsedId = parseInt(id);
+    if (!parsedId || !plantId || !common_name) {
+      return res.status(400).send('Missing required fields');
+    }
+    const newPlant = { id: parsedId, plantId, common_name, water_frequency, water_done, plant_health };
+    plantsList.push(newPlant);
+    res.status(201).send({ message: 'Plant added successfully', plant: newPlant });
+  });
+
+app.get('/plants', async (req, res) => {
+    try {
+      const { id } = req.query;
+  
+      if (id) {
+        // Convert plant.id to string for comparison if it's a number or check string to string comparison
+        const plants = plantsList.filter(plant => plant.id === parseInt(id)); // id is a string in your example
+  
+        if (plants.length > 0) {
+          res.status(200).json({ message: 'Plant(s) fetched successfully', plants });
+        } else {
+          res.status(404).json({ message: 'No plants found with the given id' });
+        }
+      } else {
+        // If no id is provided, return the entire plants list
+        res.status(200).json({ message: 'Plants fetched successfully', plantsList });
+      } 
+    } catch (error) {
+      console.error('Error fetching plants:', error);
+      res.status(500).json({ message: 'Server error, could not fetch plants' });
+    }
+  });
+  
+  
+  
 // Routes
 //const plantRoutes = require('./routes/plants');
 //app.use('/api/plants', plantRoutes);
 
 // Start Server
-const PORT = 8080;
+const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

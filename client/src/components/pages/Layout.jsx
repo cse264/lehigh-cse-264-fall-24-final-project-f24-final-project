@@ -11,7 +11,10 @@ export default function Layout() {
     { name: 'About', href: '/about' },
     { name: 'Search', href: '/search' },
   ];
-
+  const handleLogout = () => {
+    localStorage.removeItem('auth_token');  
+    localStorage.removeItem('id');  
+  };
   return (
     <div className="flex flex-col min-h-screen font-mono">
       <header className="p-4 bg-gradient-to-r from-emerald-500 via-emerald-300 to-emerald-500 text-white">
@@ -34,6 +37,7 @@ export default function Layout() {
             <Button
                 as={Link}
                 variant="ghost"
+                onClick={handleLogout}
               >
                 <Link to="/">Logout</Link>
               </Button>

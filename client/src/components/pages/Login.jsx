@@ -17,6 +17,7 @@ export default function Login() {
         token: response.credential,
       });
       localStorage.setItem('auth_token', response.credential); // Store token
+      localStorage.setItem('id', data.user.sub)
       navigate('/about');
     } catch (error) {
       console.error('Error:', error);
@@ -24,7 +25,6 @@ export default function Login() {
     }
   };
   
-
   const errorMessage = (error) => {
     console.error('Error:', error);
     setError('Login failed. Please try again.');
