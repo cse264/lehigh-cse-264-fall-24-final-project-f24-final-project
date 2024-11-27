@@ -2,13 +2,23 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
+import { useNavigate } from 'react-router-dom';
 
 export default function SearchPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [plants, setPlants] = useState([]);
   const [loading, setLoading] = useState(false);
   const [containerHeight, setContainerHeight] = useState("auto");
-
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const navigate = useNavigate();
+  useEffect(() => {
+    const token = localStorage.getItem('auth_token');
+    if (!token) {
+      navigate('/');  
+    } else {
+      setIsAuthenticated(true); 
+    }
+  }, [navigate]);
   const handleSearch = async () => {
     if (!searchTerm.trim()) return;
     setLoading(true);
@@ -26,17 +36,15 @@ export default function SearchPage() {
       setLoading(false);
     }
   };
-
-  // Dynamically adjust container height based on the search results
   useEffect(() => {
     if (plants.length > 0) {
-      setContainerHeight("auto");  // Adjust to 'auto' for more content
+      setContainerHeight("auto");
     } else {
-      setContainerHeight("620px"); // Adjust to a fixed size or preferred height when no results
+      setContainerHeight("620px");
     }
   }, [plants]);
 
-  return (
+  return isAuthenticated ? (
     <div
       className="flex flex-col items-center w-screen bg-gradient-to-br from-pink-200 via-emerald-100 to-blue-200 p-6"
       style={{ minHeight: containerHeight, transition: "min-height 0.3s ease" }}
@@ -76,6 +84,8 @@ export default function SearchPage() {
         )}
       </div>
     </div>
+  ) : (
+    <div>Loading...</div>
   );
 }
 

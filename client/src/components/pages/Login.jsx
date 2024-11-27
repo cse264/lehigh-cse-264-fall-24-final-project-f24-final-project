@@ -8,16 +8,19 @@ export default function Login() {
   const navigate = useNavigate();
 
   const responseMessage = async (response) => {
+    if (!response.credential) {
+      setError('Invalid login attempt. Please try again.');
+      return;
+    }
     try {
-      console.log('Success:', response.credential); // Log the token from Google OAuth response
       const { data } = await axios.post('http://localhost:8080/login', {
-        token: response.credential, // Send the token to the backend
+        token: response.credential,
       });
-      console.log('Backend Response:', data); // Log the backend response
-      navigate('/home'); // Navigate to the home page on successful login
+      localStorage.setItem('auth_token', response.credential); // Store token
+      navigate('/about');
     } catch (error) {
       console.error('Error:', error);
-      setError('Login failed. Please try again.'); // Show error message in the UI
+      setError('Login failed. Please try again.');
     }
   };
   

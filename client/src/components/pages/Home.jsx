@@ -9,11 +9,24 @@ import {
 import { Sprout, Flower2 } from "lucide-react";
 import { Button } from "../ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
 
 export default function Home() {
   const { toast } = useToast();
-  const [plantItems, setPlantItems] = useState(initialPlantItems);
+  const navigate = useNavigate();
+  const [plantItems, setPlantItems] = useState(initialPlantItems); 
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem('auth_token');
+    if (!token) {
+      navigate('/');  
+    } else {
+      setIsAuthenticated(true); 
+    }
+  }, [navigate]);
+
   const onWater = (index) => {
     setPlantItems((prevItems) =>
       prevItems.map((plant, i) =>
@@ -28,11 +41,12 @@ export default function Home() {
       variant: "water",
     });
   };
-  return (
+
+  return isAuthenticated ? (
     <div className="flex-row items-center justify-center w-screen bg-gradient-to-br from-pink-200 via-emerald-100 to-blue-200 p-6">
       <div className="flex flex-col items-center justify-center space-y-6">
         {plantItems.map((plant, index) => (
-         <Card key={index}>
+          <Card key={index}>
             <CardHeader>
               <CardTitle>{plant.species}</CardTitle>
               <CardDescription>Health: {plant.plant_health}</CardDescription>
@@ -43,14 +57,12 @@ export default function Home() {
                   <Flower2
                     key={i}
                     size={70}
-                    className={`${
-                      i < plant.water_done ? "text-green-500" : "text-gray-300"
-                    }`}
+                    className={`${i < plant.water_done ? "text-green-500" : "text-gray-300"}`}
                   />
                 ))}
               </div>
               <p className="mt-4 text-center">
-                <strong>Watering Progress:</strong>{" "}{plant.water_done}/{plant.water_frequency}
+                <strong>Watering Progress:</strong> {plant.water_done}/{plant.water_frequency}
               </p>
               <p className="text-center">
                 <strong>Sunlight:</strong> {plant.sunlight}
@@ -60,7 +72,7 @@ export default function Home() {
               </p>
             </CardContent>
             <CardFooter className="space-x-5">
-            <Button
+              <Button
                 variant="water"
                 onClick={() => onWater(index)}
                 disabled={plant.water_done >= plant.water_frequency}
@@ -73,6 +85,8 @@ export default function Home() {
         ))}
       </div>
     </div>
+  ) : (
+    <div>Loading...</div>
   );
 }
 
