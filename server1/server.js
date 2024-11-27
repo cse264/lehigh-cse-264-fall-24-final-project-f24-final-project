@@ -34,7 +34,8 @@ app.post('/login', async (req, res) => {
       console.error('Error verifying token:', error);
       res.status(400).send('Invalid token');
     }
-  });
+});
+
 /*GET*/
 // route for getting plants by user
 app.get("/users/:userID/plants", (req, res) => {
@@ -43,7 +44,7 @@ app.get("/users/:userID/plants", (req, res) => {
 
 // route for getting plants 
 app.get("/plants", (req, res) => {
-    res.json('hello')
+    
 });
 
 
