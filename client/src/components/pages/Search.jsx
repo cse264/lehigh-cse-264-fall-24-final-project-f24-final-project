@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
@@ -7,10 +7,10 @@ export default function SearchPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [plants, setPlants] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [containerHeight, setContainerHeight] = useState("auto");
 
   const handleSearch = async () => {
     if (!searchTerm.trim()) return;
-
     setLoading(true);
     try {
       const response = await axios.get(
@@ -18,17 +18,29 @@ export default function SearchPage() {
       );
       const data = response.data.data;
       console.log("Fetched plants:", data);
-      setPlants(data); 
+      setPlants(data);
     } catch (error) {
       console.error("Error fetching plant data:", error);
-      setPlants([]); 
+      setPlants([]);
     } finally {
       setLoading(false);
     }
   };
 
+  // Dynamically adjust container height based on the search results
+  useEffect(() => {
+    if (plants.length > 0) {
+      setContainerHeight("auto");  // Adjust to 'auto' for more content
+    } else {
+      setContainerHeight("620px"); // Adjust to a fixed size or preferred height when no results
+    }
+  }, [plants]);
+
   return (
-    <div className="flex flex-col items-center  w-screen bg-gradient-to-br from-pink-200 via-emerald-100 to-blue-200 p-6">
+    <div
+      className="flex flex-col items-center w-screen bg-gradient-to-br from-pink-200 via-emerald-100 to-blue-200 p-6"
+      style={{ minHeight: containerHeight, transition: "min-height 0.3s ease" }}
+    >
       <h1 className="text-3xl font-bold text-pink-400 mb-4">🌸 Find Your Plant 🌿</h1>
       <div className="relative w-full max-w-md">
         <Input
