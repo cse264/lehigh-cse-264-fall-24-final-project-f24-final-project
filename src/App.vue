@@ -1,15 +1,20 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <img 
+    alt="WeatherWise logo" 
+    src="./assets/logo.png"
+    :style="{width: '200px', height: 'auto'}"
+  />
+  <SearchPage msg="Welcome to Your Vue.js App"/>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import SearchPage from './components/SearchPage.vue'
+import './App.css';
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    SearchPage
   }
 }
 </script>
