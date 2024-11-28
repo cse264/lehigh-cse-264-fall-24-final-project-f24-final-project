@@ -39,20 +39,42 @@ export default function Home() {
 
   // Function to water a plant and update its watering status
   const onWater = (plantId) => {
+    // Optimistically update UI
     setPlantItems((prevItems) =>
-      prevItems.map((plant, i) =>
-        i === plantId && plant.water_done < plant.water_frequency
+      prevItems.map((plant) =>
+        plant.plantId === plantId && plant.water_done < plant.water_frequency
           ? { ...plant, water_done: plant.water_done + 1 }
           : plant
       )
     );
+  
+    // Call API to update the backend
     waterPlants(plantId)
-    toast({
-      description: "Your plant has been watered successfully 💧",
-      duration: 2000,
-      variant: "water",
-    });
+      .then((updatedPlant) => {
+        if (updatedPlant) {
+          // Sync UI with updated plant data from server
+          setPlantItems((prevItems) =>
+            prevItems.map((plant) =>
+              plant.plantId === updatedPlant.plantId ? updatedPlant : plant
+            )
+          );
+          toast({
+            description: "Your plant has been watered successfully 💧",
+            duration: 2000,
+            variant: "water",
+          });
+        }
+      })
+      .catch((error) => {
+        console.error("Error watering plant:", error);
+        toast({
+          description: "Failed to water the plant. Please try again!",
+          duration: 2000,
+          variant: "error",
+        });
+      });
   };
+  
 
   return isAuthenticated ? (
     <div className="flex-row items-center justify-center w-screen bg-gradient-to-br from-pink-200 via-emerald-100 to-blue-200 p-6">
@@ -90,7 +112,7 @@ export default function Home() {
               <CardFooter className="space-x-5">
                 <Button
                   variant="water"
-                  onClick={() => onWater(index)}
+                  onClick={() => onWater(plant.plantId)}
                   disabled={plant.water_done >= plant.water_frequency}
                 >
                   Water

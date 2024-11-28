@@ -42,6 +42,7 @@ export const deletePlants = async (userId, plantId) => {
 //PUT for watering the plants
 export const waterPlants = async (plantId) => {
   try {
+    console.log("Watering Plant with ID:", plantId); // Debugging
     const res = await axios.put('http://localhost:8080/plants/water', { plantId });
     console.log('Plant Watered:', res.data);
     return res.data.plant; 

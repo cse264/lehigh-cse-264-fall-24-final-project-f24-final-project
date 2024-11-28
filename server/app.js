@@ -14,7 +14,8 @@ app.use(express.json());
 const { OAuth2Client } = require('google-auth-library');
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
-let plantsList = [];
+let plantsList = [
+];
 const water_frequency = 1;
 const water_done = 0;
 const plant_health = 'Fair';
@@ -111,28 +112,32 @@ app.get('/plants', async (req, res) => {
   //Water the plant
   app.put('/plants/water', async (req, res) => {
     try {
-      const { plantId } = req.body;  // Get plantId from the body
+      console.log("Request Body:", req.body);
+      const { plantId } = req.body;
       if (!plantId) {
-        return res.status(400).json({ message: 'Plant ID is required' });
+        return res.status(400).json({ message: 'Valid Plant ID is required' });
       }
-      const plantIndex = plantList.findIndex(plant => plant.plantId === parseInt(plantId));
-      if (plantIndex !== -1) {
-        if (plantList[plantIndex].water_done === undefined) {
-          plantList[plantIndex].water_done = 0;
-        }
-        plantList[plantIndex].water_done += 1;
-        return res.status(200).json({
-          message: `Plant ${plantId} has been watered`,
-          plant: plantList[plantIndex],  
-        });
-      } else {
-        return res.status(404).json({ message: 'No plant found with the given plantId' });
+      const plantIndex = plantsList.findIndex(plant => plant.plantId === parseInt(plantId));
+      if (plantIndex === -1) {
+        return res.status(404).json({ message: 'No plant found with the given Plant ID' });
       }
+      const updatedPlant = {
+        ...plantsList[plantIndex],
+        water_done: (plantsList[plantIndex].water_done || 0) + 1,
+      };
+      console.log(updatedPlant);
+      plantsList[plantIndex] = updatedPlant;
+  
+      res.status(200).json({
+        message: `Plant ${plantId} has been watered`,
+        plant: updatedPlant,
+      });
     } catch (error) {
       console.error('Error watering plant:', error);
-      return res.status(500).json({ message: 'Server error, could not water plant' });
+      res.status(500).json({ message: 'Server error, could not water plant' });
     }
   });
+  
   
   
   const getLatestPlantId = () => {
