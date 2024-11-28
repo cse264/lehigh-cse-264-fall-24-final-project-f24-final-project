@@ -27,8 +27,9 @@ export const getPlants = async (userId) => {
 };
 
 //delete plants
-export const deletePlants = async (userId, plantId) => {
+export const deletePlant = async (plantId) => {
   try {
+    console.log("Deleting Plant with ID:", plantId);
     const res = await axios.delete(`http://localhost:8080/plants/${plantId}`);
     console.log('Plant Deleted:', res.data);
     return res.data.plant; 

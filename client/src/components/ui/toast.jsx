@@ -27,7 +27,11 @@ const toastVariants = cva(
         destructive:
           "destructive group border-destructive bg-destructive text-destructive-foreground",
         water:
-          "bg-sky-300  group text-destructive-foreground text-center border-2 border-sky-500"
+          "bg-sky-300  group text-destructive-foreground text-center border-2 border-sky-500",
+        addPlant:
+          "bg-emerald-300  group text-destructive-foreground text-center border-2 border-emerald-500",
+        deletePlant:
+          "bg-red-300  group text-destructive-foreground text-center border-2 border-red-500",
       },
     },
     defaultVariants: {

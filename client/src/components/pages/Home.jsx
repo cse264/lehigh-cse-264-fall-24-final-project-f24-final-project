@@ -6,6 +6,7 @@ import { Flower2 } from "lucide-react";
 import { Button } from "../ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { waterPlants } from "@/api/api";
+import { deletePlant } from "@/api/api";
 
 export default function Home() {
   const { toast } = useToast();
@@ -36,8 +37,23 @@ export default function Home() {
         });
     }
   }, [isAuthenticated]);  // Re-run when authentication status changes
-
   // Function to water a plant and update its watering status
+
+  const onDelete = (plantId) => {
+    setPlantItems((prevItems) => prevItems.filter((plant) => plant.plantId !== plantId));
+    deletePlant(plantId)
+      .then((updatePlants) => {
+        if (updatedPlant) {
+          // Sync UI with updated plant data from server
+          toast({
+            description: "Your plant has been deleted ❌",
+            duration: 2000,
+            variant: "deletePlant",
+          });
+        }
+      })
+  }
+
   const onWater = (plantId) => {
     // Optimistically update UI
     setPlantItems((prevItems) =>
@@ -47,7 +63,6 @@ export default function Home() {
           : plant
       )
     );
-  
     // Call API to update the backend
     waterPlants(plantId)
       .then((updatedPlant) => {
@@ -82,7 +97,13 @@ export default function Home() {
         {plantItems.length > 0 ? (
           plantItems.map((plant, index) => (
             <Card key={index}>
-              <CardHeader>
+              <CardHeader className="relative">
+                <button
+                  className="absolute top-2 right-2 text-gray-500 hover:text-red-700 focus:outline-none text-3xl pr-2"
+                  onClick={() => deletePlant(plant.plantId)}
+                >
+                  ✕
+                </button>
                 <CardTitle>{plant.common_name}</CardTitle>
                 <CardDescription>Health: {plant.plant_health}</CardDescription>
               </CardHeader>

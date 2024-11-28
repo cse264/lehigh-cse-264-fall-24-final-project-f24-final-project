@@ -4,8 +4,10 @@ import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
 import { addPlant } from "@/api/api";
+import { useToast } from "@/hooks/use-toast";
 
 export default function SearchPage() {
+  const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
   const [plants, setPlants] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -49,7 +51,11 @@ export default function SearchPage() {
     }
     try {
       await addPlant({ userId, common_name });  
-      alert(`${common_name} has been added to your list!`);
+      toast({
+        description: "Your plant has been added to your list 😁",
+        duration: 2000,
+        variant: "addPlant",
+      });
     } catch (error) {
       console.error('Error adding plant:', error);
       alert('Failed to add plant. Please try again.');
