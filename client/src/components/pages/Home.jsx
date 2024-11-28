@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Flower2 } from "lucide-react";
 import { Button } from "../ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { waterPlants } from "@/api/api";
 
 export default function Home() {
   const { toast } = useToast();
@@ -37,14 +38,15 @@ export default function Home() {
   }, [isAuthenticated]);  // Re-run when authentication status changes
 
   // Function to water a plant and update its watering status
-  const onWater = (index) => {
+  const onWater = (plantId) => {
     setPlantItems((prevItems) =>
       prevItems.map((plant, i) =>
-        i === index && plant.water_done < plant.water_frequency
+        i === plantId && plant.water_done < plant.water_frequency
           ? { ...plant, water_done: plant.water_done + 1 }
           : plant
       )
     );
+    waterPlants(plantId)
     toast({
       description: "Your plant has been watered successfully 💧",
       duration: 2000,

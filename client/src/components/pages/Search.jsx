@@ -12,7 +12,7 @@ export default function SearchPage() {
   const [containerHeight, setContainerHeight] = useState("auto");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
-  const id = localStorage.getItem('id');  // Get user ID from localStorage
+  const userId = localStorage.getItem('id');  // Get user ID from localStorage
   useEffect(() => {
     const token = localStorage.getItem('auth_token');
     if (!token) {
@@ -41,14 +41,14 @@ export default function SearchPage() {
     }
   };
 
-  // Handle adding plant to the user's list
-  const handleAddPlant = async (plantId, common_name) => {
-    if (!id) {
+  
+  const handleAddPlant = async (common_name) => {
+    if (!userId) {
       alert('User not authenticated. Please log in.');
       return;
     }
     try {
-      await addPlant({ id, plantId, common_name });  // Send data to the backend
+      await addPlant({ userId, common_name });  
       alert(`${common_name} has been added to your list!`);
     } catch (error) {
       console.error('Error adding plant:', error);
@@ -99,7 +99,7 @@ export default function SearchPage() {
                 {plant.scientific_name ? `Scientific Name: ${plant.scientific_name}` : "No scientific name available."}
               </p>
               <button
-                onClick={() => handleAddPlant(plant.id, plant.common_name)}
+                onClick={() => handleAddPlant(plant.common_name)}
                 className="mt-2 px-4 py-2 bg-emerald-500 text-white rounded-md hover:bg-emerald-600"
               >
                 Add to My Plants
