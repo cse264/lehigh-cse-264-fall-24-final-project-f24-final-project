@@ -23,6 +23,7 @@ app.get("/api", (req, res) => {
     res.json({plantTest: ["fern", "flower", "weed"]});
 });
 
+//OAuth Log in 
 app.post('/login', async (req, res) => {
     console.log(req.body);
     const { token } = req.body; // Get the Google OAuth token from the frontend
@@ -44,6 +45,7 @@ app.post('/login', async (req, res) => {
     }
 });
 
+//Add new plant to garden
 app.post('/plants', async (req, res) => {
     const { id, plantId, common_name, water_frequency = 1, water_done = 0 , plant_health = "Good" } = req.body;
     const parsedId = parseInt(id);
@@ -55,6 +57,7 @@ app.post('/plants', async (req, res) => {
     res.status(201).send({ message: 'Plant added successfully', plant: newPlant });
   });
 
+//retrieve the whole garden
 app.get('/plants', async (req, res) => {
     try {
       const { id } = req.query;
@@ -77,6 +80,57 @@ app.get('/plants', async (req, res) => {
       res.status(500).json({ message: 'Server error, could not fetch plants' });
     }
   });
+
+  //delete plant from garden 
+  app.delete('/plants', async (req, res) => {
+    try {
+      const { id } = req.query;
+  
+      if (id) {
+        // Convert plant.id to string for comparison if it's a number or check string to string comparison
+        const plants = plantsList.filter(plant => plant.id === parseInt(id)); // id is a string in your example
+  
+        if (plants.length > 0) {
+          //delete the plant:
+          plantList = plantList.filter(plant => plant.id != id)
+          res.status(200).json({ message: 'Plant(s) fetched successfully', plants });
+        } else {
+          res.status(404).json({ message: 'No plants found with the given id' });
+        }
+      } else {
+        // If no id is provided
+        res.status(200).json({ message: 'No id provided'});
+      } 
+    } catch (error) {
+      console.error('Error fetching plants:', error);
+      res.status(500).json({ message: 'Server error, could not fetch plants' });
+    }
+  });
+
+  //Water the plant
+  app.put('/plants/water', async(req, res) =>{
+    try{
+        const { id } = req.query
+        if(id){
+            const plants = plantsList.filter(plant => plant.id === parseInt(id)); // id is a string in your example
+            const plantIndex = plantsList.findIndex(plant => plant.id === parseInt(id)); // id is a string in your example
+
+            if (plants.length > 0) {
+                //water the plant:
+                plantList[plantIndex].water_done +=1
+                res.status(200).json({ message: `Plant ${id} has been watered`});
+              } else {
+                res.status(404).json({ message: 'No plants found with the given id' });
+              }
+        }else{
+            // If no id is provided
+            res.status(200).json({ message: 'No id provided'});
+        }
+    }catch (error) {
+        console.error('Error fetching plants:', error);
+        res.status(500).json({ message: 'Server error, could not fetch plants' });
+    }
+  })
   
   
   
