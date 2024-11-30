@@ -15,6 +15,7 @@ const { OAuth2Client } = require('google-auth-library');
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 let plantsList = [
+
 ];
 const water_frequency = 1;
 const water_done = 0;
@@ -92,20 +93,19 @@ app.get('/plants', async (req, res) => {
   app.delete('/plants/:plantId', async (req, res) => {
     try {
       const { plantId } = req.params;
-      if (plantId) {
-        const plant = plantsList.filter(plant => plant.plantId === parseInt(plantId)); 
-        if (plant) {
-          plantList = plantList.filter(plant => plant.id != plantId)
-          res.status(200).json({ message: 'Plant(s) fetched successfully', plants });
-        } else {
-          res.status(404).json({ message: 'No plants found with the given id' });
-        }
-      } else {
-        res.status(200).json({ message: 'No id provided'});
-      } 
+      const plantIdInt = parseInt(plantId); 
+      const plantExists = plantsList.some((plant) => plant.plantId === plantIdInt);
+      if (!plantExists) {
+        return res.status(404).json({ message: 'No plants found with the given id' });
+      }
+      plantsList = plantsList.filter((plant) => plant.plantId !== plantIdInt);
+      res.status(200).json({
+        message: 'Plant deleted successfully',
+        plants: plantsList, // Return the updated list of plants
+      });
     } catch (error) {
-      console.error('Error fetching plants:', error);
-      res.status(500).json({ message: 'Server error, could not fetch plants' });
+      console.error('Error deleting plant:', error);
+      res.status(500).json({ message: 'Server error, could not delete plant' });
     }
   });
 

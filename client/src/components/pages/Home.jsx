@@ -23,7 +23,6 @@ export default function Home() {
     }
   }, [navigate]);
 
-  // Fetch plants when user is authenticated
   useEffect(() => {
     if (isAuthenticated) {
       const userId = localStorage.getItem('id'); 
@@ -36,26 +35,31 @@ export default function Home() {
           console.error('Error fetching plants:', error);
         });
     }
-  }, [isAuthenticated]);  // Re-run when authentication status changes
-  // Function to water a plant and update its watering status
+  }, [isAuthenticated]);
 
   const onDelete = (plantId) => {
+    const originalPlantItems = [...plantItems];
     setPlantItems((prevItems) => prevItems.filter((plant) => plant.plantId !== plantId));
     deletePlant(plantId)
-      .then((updatePlants) => {
-        if (updatedPlant) {
-          // Sync UI with updated plant data from server
-          toast({
-            description: "Your plant has been deleted ❌",
-            duration: 2000,
-            variant: "deletePlant",
-          });
-        }
+      .then(() => {
+        toast({
+          description: "Your plant has been deleted ❌",
+          duration: 2000,
+          variant: "deletePlant",
+        });
       })
-  }
+      .catch((error) => {
+        console.error("Error deleting plant:", error);
+        setPlantItems(originalPlantItems); // Revert UI if deletion fails
+        toast({
+          description: "Failed to delete the plant. Please try again!",
+          duration: 2000,
+          variant: "error",
+        });
+      });
+  };
 
   const onWater = (plantId) => {
-    // Optimistically update UI
     setPlantItems((prevItems) =>
       prevItems.map((plant) =>
         plant.plantId === plantId && plant.water_done < plant.water_frequency
@@ -63,11 +67,9 @@ export default function Home() {
           : plant
       )
     );
-    // Call API to update the backend
     waterPlants(plantId)
       .then((updatedPlant) => {
         if (updatedPlant) {
-          // Sync UI with updated plant data from server
           setPlantItems((prevItems) =>
             prevItems.map((plant) =>
               plant.plantId === updatedPlant.plantId ? updatedPlant : plant
@@ -89,18 +91,17 @@ export default function Home() {
         });
       });
   };
-  
 
   return isAuthenticated ? (
-    <div className="flex-row items-center justify-center w-screen bg-gradient-to-br from-pink-200 via-emerald-100 to-blue-200 p-6">
-      <div className="flex flex-col items-center justify-center space-y-6">
+    <div className="min-h-screen w-screen bg-gradient-to-br from-pink-200 via-emerald-100 to-blue-200 p-6 flex items-center justify-center">
+      <div className="flex flex-col items-center justify-center space-y-6 w-full">
         {plantItems.length > 0 ? (
           plantItems.map((plant, index) => (
-            <Card key={index}>
+            <Card key={index} className="w-full max-w-md">
               <CardHeader className="relative">
                 <button
                   className="absolute top-2 right-2 text-gray-500 hover:text-red-700 focus:outline-none text-3xl pr-2"
-                  onClick={() => deletePlant(plant.plantId)}
+                  onClick={() => onDelete(plant.plantId)}
                 >
                   ✕
                 </button>
@@ -120,8 +121,7 @@ export default function Home() {
                   ))}
                 </div>
                 <p className="mt-4 text-center">
-                  <strong>Watering Progress:</strong>{" "}
-                  {plant.water_done}/{plant.water_frequency}
+                  <strong>Watering Progress:</strong> {plant.water_done}/{plant.water_frequency}
                 </p>
                 <p className="text-center">
                   <strong>Sunlight:</strong> {plant.sunlight}
@@ -143,11 +143,11 @@ export default function Home() {
             </Card>
           ))
         ) : (
-          <p className="text-gray-500">No plants found. Please add some plants!</p>
+          <p className="text-gray-500 text-2xl font-semibold">No plants found. Please add some plants!</p>
         )}
       </div>
     </div>
   ) : (
-    <div>Loading...</div>
+    <div className="min-h-screen flex items-center justify-center">Loading...</div>
   );
 }
