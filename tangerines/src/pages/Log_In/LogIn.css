@@ -36,9 +36,13 @@ p {
 form button {
     width: 100%;
     padding: 2vh !important;
-    margin-top: 10vh;
     background-color: #E9631A !important;
     border: none !important;
+}
+
+.error{
+    color: red;
+    visibility: hidden;
 }
 
 form button:hover {
@@ -74,10 +78,44 @@ form button:hover {
 }
 
 .signUpLink{
-    color: #E9631A !important;
+    color: #E9631A;
     font-weight: bold;
 }
 
 .signUpLink:hover{
     color: #AF5829 !important;
+}
+
+.backToLogin{
+    color: #E9631A !important;
+
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+  
+.overlay-form {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 300px;
+    text-align: center;
+}
+  
+.overlay-form h2 {
+    margin-bottom: 20px;
+}
+  
+.overlay-form button {
+    margin-top: 10px;
 }
