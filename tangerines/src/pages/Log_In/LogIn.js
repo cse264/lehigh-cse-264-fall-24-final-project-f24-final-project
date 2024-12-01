@@ -1,7 +1,6 @@
 import React from 'react';
 import './LogIn.css';
 import LogoImage from '../../assets/images/Logo Header.svg';
-//import { Link } from 'react-router-dom';
 
 function LogIn(){
     return(
@@ -27,7 +26,7 @@ function LogIn(){
 
                     <p class="or">or</p>
 
-                    <p class="signUp">Dont have an account? Sign Up</p>
+                    <p class="signUp">Dont have an account? <span class="signUpLink">Sign Up</span></p>
                 </form>
             </div>
         </div>

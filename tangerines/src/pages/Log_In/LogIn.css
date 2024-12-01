@@ -29,7 +29,8 @@ p {
 .loginHeader{
     text-align: center;
     font-family: "Kay Pho Du", serif;
-    font-size: 32px;
+    font-size: 24px;
+    margin-bottom: 4vh;
 }
 
 form button {
@@ -55,8 +56,28 @@ form button:hover {
 
 .or{
     margin-top: 3vh;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 3vh 0;
+}
+
+.or::before, .or::after {
+    content: "";
+    flex: 1;
+    border-top: 1px solid #000;
+    margin: 0 10px;
 }
 
 .signUp{
-    margin-bottom: 20vh;
+    margin-bottom: 10vh;
+}
+
+.signUpLink{
+    color: #E9631A !important;
+    font-weight: bold;
+}
+
+.signUpLink:hover{
+    color: #AF5829 !important;
 }
