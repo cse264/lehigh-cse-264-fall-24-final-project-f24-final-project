@@ -7,6 +7,7 @@ import { Button } from "../ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { waterPlants } from "@/api/api";
 import { deletePlant } from "@/api/api";
+import getRandomPlantTip from "@/api/api";
 
 export default function Home() {
   const { toast } = useToast();
@@ -91,7 +92,14 @@ export default function Home() {
         });
       });
   };
-
+  const onGetTips = () => {
+    let tip = getRandomPlantTip();
+    toast({
+      description: tip,
+      duration: 4000,
+      variant: "tip",
+    });
+  }
   return isAuthenticated ? (
     <div className="min-h-screen w-screen bg-gradient-to-br from-pink-200 via-emerald-100 to-blue-200 p-6 flex items-center justify-center">
       <div className="flex flex-col items-center justify-center space-y-6 w-full">
@@ -138,7 +146,10 @@ export default function Home() {
                 >
                   Water
                 </Button>
-                <Button variant="tips">Plant Tips</Button>
+                <Button 
+                variant="tips"
+                onClick={() => onGetTips()}
+                >Plant Tips</Button>
               </CardFooter>
             </Card>
           ))
