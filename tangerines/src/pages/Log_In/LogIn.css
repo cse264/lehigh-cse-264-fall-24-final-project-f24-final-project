@@ -1,0 +1,62 @@
+@import url('https://fonts.googleapis.com/css2?family=Kay+Pho+Du:wght@400;500;600;700&display=swap');
+
+body{
+    background-image: url('../../assets/images/Cooking Background Image.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 100vh;
+}
+
+.card {
+    margin-left: 60vh;
+    margin-right: 60vh;
+    margin-top: 10vh;
+    padding: 20px;
+}
+
+.logo {
+    max-width: 50%;
+    height: auto;
+    display: block;
+    margin: 50px auto 40px auto;
+}
+
+p {
+    text-align: center;
+    font-family: "Kay Pho Du", serif;
+}
+
+.loginHeader{
+    text-align: center;
+    font-family: "Kay Pho Du", serif;
+    font-size: 32px;
+}
+
+form button {
+    width: 100%;
+    padding: 2vh !important;
+    margin-top: 10vh;
+    background-color: #E9631A !important;
+    border: none !important;
+}
+
+form button:hover {
+    background-color: #AF5829 !important;
+}
+
+#inputPassword {
+    margin-top: 2vh;
+    padding: 2vh !important;
+}
+
+#inputEmail {
+    padding: 2vh !important;
+}
+
+.or{
+    margin-top: 3vh;
+}
+
+.signUp{
+    margin-bottom: 20vh;
+}
