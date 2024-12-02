@@ -48,6 +48,12 @@ function App() {
         fetchAllMovies();
     }, []);
 
+    const[isReviews, setIsReviews] = useState(false);
+
+    const handleMovieClick = () => {
+        setIsReviews(true);
+    }
+
     if (loading) return <div>Loading...</div>;
 
     return (
@@ -60,12 +66,12 @@ function App() {
             </section>
 
             <section ref={reviewsRef} className="section reviews">
-                <MovieList title="Popular Movies" movies={popularMovies} />
+                <MovieList title="Popular Movies" movies={popularMovies} onClick={handleMovieClick} />
             </section>
 
             <section ref={watchlistRef} className="section watchlist">
-                <MovieList title="Now Playing" movies={nowPlayingMovies} />
-                <MovieList title="Upcoming Movies" movies={upcomingMovies} />
+                <MovieList title="Now Playing" movies={nowPlayingMovies} onClick={handleMovieClick}/>
+                <MovieList title="Upcoming Movies" movies={upcomingMovies} onClick={handleMovieClick} />
             </section>
 
             <section ref={usersRef} className="section users">
@@ -73,7 +79,7 @@ function App() {
             </section>
 
             <section ref={usersRef} className="section reviews">
-                <Reviews />
+                {isReviews && (<Reviews />)}
             </section>
 
             <section ref={usersRef} className="section watchlist">

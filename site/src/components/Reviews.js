@@ -13,10 +13,9 @@ const Reviews = () => {
     });
     const [loading, setLoading] = useState(true);
 
-    // Fetch all reviews when component mounts
     useEffect(() => {
         setLoading(true);
-        fetch('http://localhost:3000/api/reviews')  // Fetching all reviews
+        fetch('http://localhost:3000/api/reviews') 
             .then(response => response.json())
             .then(data => {
                 setReviews(data);
@@ -26,7 +25,7 @@ const Reviews = () => {
                 console.error('Error fetching reviews:', error);
                 setLoading(false);
             });
-    }, []); // Empty dependency array ensures this only runs once on mount
+    }, []);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
