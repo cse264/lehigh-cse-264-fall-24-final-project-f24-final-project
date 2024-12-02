@@ -1,6 +1,7 @@
 import React from 'react';
 //import { useState } from 'react';
 import './NavBar.css';
+import { Link } from 'react-router-dom';
 
 import logo from "../../assets/images/Logo.svg";
 import searchIcon from "../../assets/images/Search Icon.svg";
@@ -28,33 +29,33 @@ function NavBar() {
             <ul class="navbar-nav mx-auto">
 
               <li class="nav-item active">
-                <a class="navbar-brand" href="../Search">
-                    <img class="search-icon" src={searchIcon} alt="" />
-                </a>
+                <Link class="navbar-link" to="/search">
+                    <img class="search-icon" src={searchIcon} alt="Search" />
+                </Link>
               </li>
 
               <li class="nav-item">
-                <a class="nav-link" href="#">
-                <img class="my-recipe-icon" src={MyRecipeIcon} alt="" />
-                </a>
+                <Link class="nav-link" to="/myrecipes">
+                    <img class="my-recipe-icon" src={MyRecipeIcon} alt="My Recipes" />
+                </Link>
               </li>
 
               <li class="nav-item">
-                <a class="nav-link" href="#">
-                <img class="home-icon" src={HomeIcon} alt="" />
-                </a>
+                <Link class="nav-link" to="/home">
+                <img class="home-icon" src={HomeIcon} alt="Home" />
+                </Link>
               </li>
 
               <li class="nav-item">
-                <a class="nav-link" href="#">
-                <img class="explore-recipe-icon" src={ExploreRecipesIcon} alt="" />
-                </a>
+                <Link class="nav-link" to="/foodcategories">
+                <img class="explore-recipe-icon" src={ExploreRecipesIcon} alt="Explore Recipes" />
+                </Link>
               </li>
 
               <li class="nav-item">
-                <a class="nav-link" href="#">
-                <img class="view-chefs-icon" src={ViewChefsIcon} alt="" />
-                </a>
+                <Link class="nav-link" to="/viewchefs">
+                <img class="view-chefs-icon" src={ViewChefsIcon} alt="View Chefs" />
+                </Link>
               </li>
 
             </ul>

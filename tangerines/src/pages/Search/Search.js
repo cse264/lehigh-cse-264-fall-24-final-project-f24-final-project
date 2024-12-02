@@ -5,7 +5,7 @@ import './Search.css';
 function Search () {
     return(
         <div>
-
+            <p>Search</p>
         </div>
     )
 }
