@@ -14,16 +14,18 @@ router.get('/', async (req, res) => {
 
 // POST create a new user
 router.post('/', async (req, res) => {
-    const { password, accountType } = req.body;
+    const { password, accountType, email, name } = req.body;
 
     // Validate input before creating user
-    if (!password || !accountType) {
-        return res.status(400).json({ message: 'Password and account type are required.' });
+    if (!password || !name || !email) {
+        return res.status(400).json({ message: 'Password, name, and email are required.' });
     }
 
     const user = new User({
         password,  
-        accountType,
+        "accountType" : "user",
+        email, 
+        name,
     });
 
     try {
