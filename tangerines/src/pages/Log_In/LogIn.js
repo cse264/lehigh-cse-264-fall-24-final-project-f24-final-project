@@ -62,7 +62,7 @@ function LogIn(){
                                     <input type="password" class="form-control" id="signupPassword" placeholder="Enter Password" />
                                 </div>
 
-                                <button type="submit" className="btn btn-primary">
+                                <button type="submit" class="btn btn-primary">
                                     Sign Up
                                 </button>
 

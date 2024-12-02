@@ -1,0 +1,16 @@
+body{
+    background-image: none;
+}
+
+.navbar{
+    padding: 0;
+    margin: 0;
+    box-shadow: 0 5px 5px #E9631A;
+}
+
+.logo {
+    padding: 1vh;
+    margin: 1vh;
+    height: 170%;
+    width: 170%;
+}
