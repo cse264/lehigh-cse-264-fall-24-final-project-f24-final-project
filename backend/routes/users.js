@@ -2,15 +2,90 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 
-router.get('/users', async (req, res) => {
-    const users = await User.find();
-    res.json(users);
+// GET all users
+router.get('/', async (req, res) => {
+    try {
+        const users = await User.find();
+        res.json(users);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
 });
 
-router.post('/users', async (req, res) => {
-    const user = new User(req.body);
-    await user.save();
-    res.status(201).json(user);
+// POST create a new user
+router.post('/', async (req, res) => {
+    const { password, accountType } = req.body;
+
+    // Validate input before creating user
+    if (!password || !accountType) {
+        return res.status(400).json({ message: 'Password and account type are required.' });
+    }
+
+    const user = new User({
+        password,  
+        accountType,
+    });
+
+    try {
+        const newUser = await user.save();
+        res.status(201).json(newUser); 
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
 });
+
+router.delete('/:requestingUserID/:targetUserID', async (req, res) => {
+        const { requestingUserID, targetUserID } = req.params;
+
+    try {
+        const requestingUser = await User.findOne({ userID: String(requestingUserID) });
+        if (!requestingUser) {
+            return res.status(404).json({ message: 'Requesting user not found' });
+        }
+        if (requestingUser.accountType !== 'admin') {
+            return res.status(403).json({ message: 'Only admin users can delete other users.' });
+        }
+
+        const targetUser = await User.findOne({ userID: targetUserID });
+        if (!targetUser) {
+            return res.status(404).json({ message: 'Target user not found.' });
+        }
+
+        if (targetUser.accountType === 'admin') {
+            return res.status(403).json({ message: 'Admin users cannot be deleted.' });
+        }
+
+        await User.findOneAndDelete({ userID: targetUserID });
+        res.json({ message: `User with userID ${targetUserID} has been deleted.` });
+
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+// Update User Password Route
+router.put('/:userID/password', async (req, res) => {
+    const { userID } = req.params;
+    const { oldPassword, newPassword } = req.body; // old and new password from the user
+    try {
+        const user = await User.findOne({ userID: userID });
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        if (user.password !== oldPassword) {
+            return res.status(400).json({ message: 'Old password does not match' });
+        }
+        if (oldPassword === newPassword) {
+            return res.status(400).json({ message: 'New password cannot be the same as old password' });
+        }
+        user.password = newPassword;
+        await user.save();
+        res.json({ message: 'Password updated successfully' });
+
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
 
 module.exports = router;
