@@ -1,0 +1,31 @@
+/* Ensure full screen coverage */
+  
+  /* Main container for the calendar */
+  .calendar-container {
+    background-color: #ffffff; /* Dark grey background */
+    height: 100vh; /* Full viewport height */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    padding: 20px;
+    margin: 0; /* Remove any default margin */
+    width: 100%; /* Ensure it spans the full width */
+  }
+  
+  /* Title styling */
+  .calendar-title {
+    color: white; /* White text for contrast */
+    margin-bottom: 20px;
+  }
+  
+  /* Iframe styling for the calendar */
+  .calendar-iframe {
+    border: 0;
+    width: 80%;
+    height: 600px;
+    background-color: white; /* White background for calendar iframe */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Subtle shadow for better aesthetics */
+  }
+  
