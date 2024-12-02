@@ -6,7 +6,7 @@ const cors = require('cors'); // Import CORS
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors({ origin: 'http://localhost:3000' })); // Allow requests from your React frontend
