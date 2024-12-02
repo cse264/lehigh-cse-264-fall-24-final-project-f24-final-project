@@ -14,3 +14,35 @@ body{
     height: 170%;
     width: 170%;
 }
+
+.search-icon{
+    padding: 2.1vh;
+    margin-top: 1.3vh;
+    margin-right: .5vh;
+    height: 55px;
+    width: 55px;
+}
+
+.my-recipe-icon{
+    padding: 2vh;
+    height: 60px;
+    width: 60px;
+}
+
+.home-icon{
+    padding: 1vh;
+    height: 60px;
+    width: 60px;
+}
+
+.explore-recipe-icon{
+    padding: 2vh;
+    height: 60px;
+    width: 60px;
+}
+
+.view-chefs-icon{
+    padding: 2vh;
+    height: 60px;
+    width: 60px;
+}
