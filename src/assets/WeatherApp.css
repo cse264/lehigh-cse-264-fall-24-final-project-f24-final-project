@@ -1,0 +1,45 @@
+* {
+  margin: 0;
+  padding: 5px;
+  box-sizing: border-box;
+}
+html, body {
+  height: 100%;
+}
+.weather-app {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 20px;
+}
+.search-bar {
+    margin: 20px 0;
+}
+.search-bar input {
+    padding: 10px;
+    font-size: 16px;
+    width: 200px;
+}
+.search-bar button {
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+.top-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: fixed; /* Fix the top nav to the top of the page */
+  top: 0; /* Align with the top edge */
+  left: 0; /* Align with the left edge */
+  width: 100%; /* Full width */
+  height: 75px; /* Set the height of the nav bar */
+  padding: 0 20px;
+  background-color: rgb(238, 223, 223);
+  border-bottom: 1px solid #ccc; /* Optional: bottom border for separation */
+  z-index: 10; /* Ensure the nav bar is above other content */
+}
+.site-name {
+    font-size: 50px;
+    font-weight: bold;
+    color: #204d7d; /* Optional: Customize color */
+}
