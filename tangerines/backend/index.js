@@ -1,15 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const admin = require('firebase-admin');
-require('dotenv').config();
-
-// Initialize Firebase Admin
-admin.initializeApp({
-    credential: admin.credential.cert(require('./firebase-service-account.json')),
-    databaseURL: process.env.FIREBASE_DATABASE_URL,
-});
-
-const db = admin.firestore(); // Firestore reference
+const { admin, db } = require('./firebase-admin');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
