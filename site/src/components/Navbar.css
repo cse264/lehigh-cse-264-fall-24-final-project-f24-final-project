@@ -47,8 +47,15 @@
     color: #e50914; /* Main color accent */
 }
 
-/* Navigation menu styles */
-.nav-menu {
+/* Navigation menu styles for 'nav-links' */
+.navbar {
+    display: flex;
+    justify-content: right;
+    align-items: center;
+    width: 100%;
+}
+
+.nav-links {
     list-style: none;
     display: flex;
     gap: 20px;
@@ -56,11 +63,11 @@
     padding: 0;
 }
 
-.nav-menu li {
+.nav-links li {
     display: inline-block;
 }
 
-.nav-menu li a {
+.nav-links li a {
     color: #fff;
     text-decoration: none;
     font-size: 1rem;
@@ -68,44 +75,14 @@
     transition: color 0.3s ease;
 }
 
-.nav-menu li a:hover {
+.nav-links li:hover {
     color: #e50914; /* Hover effect with the main color accent */
-}
-
-/* Sign-in button */
-.btn-hover {
-    display: inline-block;
-    background: #e50914;
-    color: #fff;
-    border-radius: 4px;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    font-weight: 600;
-    transition: background 0.3s ease;
-}
-
-.btn-hover:hover {
-    background: #b00710; /* Darker red on hover */
-}
-
-/* Hamburger menu for mobile view */
-.hamburger-menu {
-    display: none;
-    flex-direction: column;
-    gap: 4px;
     cursor: pointer;
-}
-
-.hamburger {
-    width: 25px;
-    height: 3px;
-    background: #fff;
 }
 
 /* Responsive design for mobile devices */
 @media (max-width: 768px) {
-    .nav-menu {
+    .nav-links {
         display: none; /* Hide menu by default */
         flex-direction: column;
         background-color: #121212;
@@ -118,7 +95,7 @@
         z-index: 5;
     }
 
-    .nav-menu.active {
+    .nav-links.active {
         display: flex; /* Show menu when active */
     }
 
