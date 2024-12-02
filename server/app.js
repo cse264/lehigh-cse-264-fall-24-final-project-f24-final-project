@@ -15,8 +15,9 @@ const { OAuth2Client } = require('google-auth-library');
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 let plantsList = [
-
+ 
 ];
+
 const water_frequency = 1;
 const water_done = 0;
 const plant_health = 'Fair';

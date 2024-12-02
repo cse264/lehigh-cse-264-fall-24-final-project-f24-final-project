@@ -131,9 +131,9 @@ export default function Home() {
                 <p className="mt-4 text-center">
                   <strong>Watering Progress:</strong> {plant.water_done}/{plant.water_frequency}
                 </p>
-                <p className="text-center">
+                {/*<p className="text-center">
                   <strong>Sunlight:</strong> {plant.sunlight}
-                </p>
+                </p>*/}
                 <p className="text-center">
                   <strong>Watering:</strong> {plant.water_frequency} times a week
                 </p>
