@@ -5,6 +5,7 @@ import { useState } from "react";
 import "./LogIn.css";
 import LogoImage from "../../assets/images/Logo Header.svg";
 import { db, auth, provider, firebase } from "../../firebase";
+import { useNavigate } from 'react-router-dom';
 
 function LogIn() {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -13,6 +14,7 @@ function LogIn() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const toggleForm = () => {
     setIsSignUp(!isSignUp);
@@ -38,7 +40,7 @@ function LogIn() {
           uid: user.uid,
           email: user.email,
           shoppingList: [],
-          admin: false,
+          isChef: false,
           allergies: [],
           likedRecipes: [],
           savedRecipies: [],
@@ -82,7 +84,7 @@ function LogIn() {
         uid: user.uid,
         email: user.email,
         shoppingList: [],
-        admin: false,
+        isChef: false,
         allergies: [],
         likedRecipes: [],
         savedRecipies: [],
@@ -135,7 +137,7 @@ function LogIn() {
             <p class="error">Username/Password not found. Please try again.</p>
 
             {/* Submit/Log In */}
-            <button type="submit" class="btn btn-primary">
+            <button type="submit" class="btn btn-primary" onClick={() => navigate("/myinfo")}>
               Log In
             </button>
             {/* Google Sign-In */}
