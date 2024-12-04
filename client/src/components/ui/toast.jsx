@@ -32,6 +32,8 @@ const toastVariants = cva(
           "bg-emerald-300  group text-destructive-foreground text-center border-2 border-emerald-500",
         deletePlant:
           "bg-red-300  group text-destructive-foreground text-center border-2 border-red-500",
+        tip:
+          "bg-pink-300  group text-destructive-foreground text-center border-2 border-pink-500",
       },
     },
     defaultVariants: {

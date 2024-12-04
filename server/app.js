@@ -14,11 +14,11 @@ app.use(express.json());
 const { OAuth2Client } = require('google-auth-library');
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
-//let plantsList = [
-//];
-// const water_frequency = 1;
-// const water_done = 0;
-// const plant_health = 'Fair';
+let plantsList = [
+];
+const water_frequency = 1;
+const water_done = 0;
+const plant_health = 'Fair';
 
 app.get("/api", (req, res) => {
     res.json({plantTest: ["fern", "flower", "weed"]});
@@ -151,23 +151,17 @@ app.post('/plants', async (req, res) => {
   app.delete('/plants/:plantId', async (req, res) => {
     try {
       const { plantId } = req.params;
-
-      if (!plantId) {
-        return res.status(400).json({ message: 'Missing required parameter: plantId' });
-      }
-
-      // Delete the plant from the garden table
-      const deleteFromGardenQuery = `
-        DELETE FROM garden 
-        WHERE plantId = $1
-      `;
-      const gardenResult = await pool.query(deleteFromGardenQuery, [plantId]);
-
-      if (gardenResult.rowCount === 0) {
-        return res.status(404).json({ message: 'Plant not found in the garden' });
-      }
-
-      res.status(200).json({ message: 'Plant deleted successfully' });
+      if (plantId) {
+        const plant = plantsList.filter(plant => plant.plantId === parseInt(plantId)); 
+        if (plant) {
+          plantList = plantList.filter(plant => plant.id != plantId)
+          res.status(200).json({ message: 'Plant(s) fetched successfully', plants });
+        } else {
+          res.status(404).json({ message: 'No plants found with the given id' });
+        }
+      } else {
+        res.status(200).json({ message: 'No id provided'});
+      } 
     } catch (error) {
       console.error('Error deleting plant:', error);
       res.status(500).json({ message: 'Server error, could not delete plant' });

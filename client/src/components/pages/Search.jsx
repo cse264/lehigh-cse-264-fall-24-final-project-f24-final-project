@@ -73,8 +73,8 @@ export default function SearchPage() {
 
   return isAuthenticated ? (
     <div
-      className="flex flex-col items-center w-screen bg-gradient-to-br from-pink-200 via-emerald-100 to-blue-200 p-6"
-      style={{ minHeight: containerHeight, transition: "min-height 0.3s ease" }}
+      className="flex flex-col items-center w-screen bg-gradient-to-br from-pink-200 via-emerald-100 to-blue-200 p-6 min-h-screen"
+      style={{ transition: "min-height 0.3s ease" }}
     >
       <h1 className="text-3xl font-bold text-pink-400 mb-4">🌸 Find Your Plant 🌿</h1>
       <div className="relative w-full max-w-md">
