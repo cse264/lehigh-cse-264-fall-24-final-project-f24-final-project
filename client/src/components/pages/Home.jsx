@@ -14,6 +14,7 @@ export default function Home() {
   const navigate = useNavigate();
   const [plantItems, setPlantItems] = useState([]); 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const paid = localStorage.getItem('paid'); 
 
   useEffect(() => {
     const token = localStorage.getItem('auth_token');
@@ -27,6 +28,7 @@ export default function Home() {
   useEffect(() => {
     if (isAuthenticated) {
       const userId = localStorage.getItem('id'); 
+      
       getPlants(userId)
         .then((data) => {
           console.log('Fetched plants:', data);
@@ -146,7 +148,7 @@ export default function Home() {
                 >
                   Water
                 </Button>
-                {user.paid && (
+                {paid === "true" && (
                 <Button 
                 variant="tips"
                 onClick={() => onGetTips()}

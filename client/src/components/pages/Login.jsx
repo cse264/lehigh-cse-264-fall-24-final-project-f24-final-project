@@ -16,8 +16,11 @@ export default function Login() {
       const { data } = await axios.post('http://localhost:8080/login', {
         token: response.credential,
       });
+      console.log("WE ARE HERE", data);
       localStorage.setItem('auth_token', response.credential); // Store token
-      localStorage.setItem('id', data.user.sub)
+      console.log("id please be right", data.user.userid)
+      localStorage.setItem('id', data.user.userid)
+      localStorage.setItem('paid', data.user.paid)
       navigate('/about');
     } catch (error) {
       console.error('Error:', error);
