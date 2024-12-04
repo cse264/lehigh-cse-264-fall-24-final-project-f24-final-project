@@ -99,7 +99,7 @@ app.post('/login', async (req, res) => {
         INSERT INTO garden (userId, plantId, water_done, plant_health)
         VALUES ($1, $2, $3, $4)
       `;
-      await pool.query(insertGardenQuery, [userId, plantId, 0, 0]);
+      await pool.query(insertGardenQuery, [userId, plantId, 0, 'Bad :(']);
 
       res.status(201).send({ message: 'Plant added successfully', plantId });
     } catch (error) {
@@ -178,7 +178,7 @@ app.put('/plants/water', async (req, res) => {
   }
 
   try {
-    // Update water_done in the garden table and fetch the water_frequency from the plants table
+    // Update water_done in the garden table
     const updateQuery = `
       UPDATE garden 
       SET water_done = water_done + 1 
@@ -195,7 +195,7 @@ app.put('/plants/water', async (req, res) => {
 
     // Get the water_frequency from the plants table
     const plantQuery = `
-      SELECT water_frequency 
+      SELECT common_name, water_frequency 
       FROM plants 
       WHERE plantId = $1;
     `;
@@ -207,11 +207,26 @@ app.put('/plants/water', async (req, res) => {
 
     const waterFrequency = plantResult.rows[0].water_frequency;
 
+    // Update plant_health in the garden table to "Good"
+    const healthUpdateQuery = `
+      UPDATE garden
+      SET plant_health = 'Good :)'
+      WHERE plantId = $1 
+      RETURNING *;
+    `;
+    const healthResult = await pool.query(healthUpdateQuery, [plantId]);
+
+    if (healthResult.rowCount === 0) {
+      return res.status(500).json({ message: 'Failed to update plant health' });
+    }
+    const { common_name, water_frequency } = plantResult.rows[0];
     res.status(200).json({
       message: `Plant ${plantId} has been watered`,
       plant: {
         ...updatedPlant,
-        water_frequency: waterFrequency, // Include water_frequency in the response
+        common_name,
+        water_frequency,
+        plant_health: healthResult.rows[0].plant_health, // Include updated health in the response
       },
     });
   } catch (error) {
@@ -219,6 +234,7 @@ app.put('/plants/water', async (req, res) => {
     res.status(500).send('Server error, could not water plant');
   }
 });
+
 
     
 
