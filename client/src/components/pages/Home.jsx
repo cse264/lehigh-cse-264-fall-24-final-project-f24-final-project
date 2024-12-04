@@ -146,10 +146,11 @@ export default function Home() {
                 >
                   Water
                 </Button>
+                {user.paid === "paid" && (
                 <Button 
                 variant="tips"
                 onClick={() => onGetTips()}
-                >Plant Tips</Button>
+                >Plant Tips</Button> )}
               </CardFooter>
             </Card>
           ))
