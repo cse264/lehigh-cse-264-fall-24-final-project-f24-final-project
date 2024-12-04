@@ -146,7 +146,7 @@ export default function Home() {
                 >
                   Water
                 </Button>
-                {user.paid === "paid" && (
+                {user.paid && (
                 <Button 
                 variant="tips"
                 onClick={() => onGetTips()}
