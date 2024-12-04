@@ -169,38 +169,57 @@ app.post('/login', async (req, res) => {
     }
   });
 
-    //Water the plant
-    app.put('/plants/water', async (req, res) => {
-      const { plantId } = req.body;
-    
-      if (!plantId) {
-        return res.status(400).json({ message: 'Valid Plant ID is required' });
-      }
-    
-      try {
-        const updateQuery = `
-          UPDATE garden 
-          SET water_done = water_done + 1 
-          WHERE plantId = $1 
-          RETURNING *
-        `;
-        const result = await pool.query(updateQuery, [plantId]);
-        const updatedPlant = result.rows[0];
-        console.log(updatedPlant);
-        if (result.rowCount > 0) {
-          res.status(200).json({ 
-            message: `Plant ${plantId} has been watered`, 
-            plant: updatedPlant
-          });
+// Water the plant
+app.put('/plants/water', async (req, res) => {
+  const { plantId } = req.body;
 
-        } else {
-          res.status(404).json({ message: 'No plant found with the given ID' });
-        }
-      } catch (error) {
-        console.error('Error watering plant:', error);
-        res.status(500).send('Server error, could not water plant');
-      }
+  if (!plantId) {
+    return res.status(400).json({ message: 'Valid Plant ID is required' });
+  }
+
+  try {
+    // Update water_done in the garden table and fetch the water_frequency from the plants table
+    const updateQuery = `
+      UPDATE garden 
+      SET water_done = water_done + 1 
+      WHERE plantId = $1 
+      RETURNING *;
+    `;
+    const gardenResult = await pool.query(updateQuery, [plantId]);
+
+    if (gardenResult.rowCount === 0) {
+      return res.status(404).json({ message: 'No plant found with the given ID' });
+    }
+
+    const updatedPlant = gardenResult.rows[0];
+
+    // Get the water_frequency from the plants table
+    const plantQuery = `
+      SELECT water_frequency 
+      FROM plants 
+      WHERE plantId = $1;
+    `;
+    const plantResult = await pool.query(plantQuery, [plantId]);
+
+    if (plantResult.rowCount === 0) {
+      return res.status(404).json({ message: 'No plant found with the given ID in the plants table' });
+    }
+
+    const waterFrequency = plantResult.rows[0].water_frequency;
+
+    res.status(200).json({
+      message: `Plant ${plantId} has been watered`,
+      plant: {
+        ...updatedPlant,
+        water_frequency: waterFrequency, // Include water_frequency in the response
+      },
     });
+  } catch (error) {
+    console.error('Error watering plant:', error);
+    res.status(500).send('Server error, could not water plant');
+  }
+});
+
     
 
 // Start Server

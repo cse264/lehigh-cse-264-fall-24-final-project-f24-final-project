@@ -95,7 +95,7 @@ export default function Home() {
         });
       });
   };
-  
+
   const onGetTips = () => {
     let tip = getRandomPlantTip();
     toast({
