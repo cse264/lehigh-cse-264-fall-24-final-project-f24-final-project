@@ -1,5 +1,5 @@
 require('dotenv').config();  // Only call it once at the top
-
+const pool = require('./db');
 const express = require('express');
 const cors = require('cors');
 
@@ -14,11 +14,11 @@ app.use(express.json());
 const { OAuth2Client } = require('google-auth-library');
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
-let plantsList = [
-];
-const water_frequency = 1;
-const water_done = 0;
-const plant_health = 'Fair';
+//let plantsList = [
+//];
+// const water_frequency = 1;
+// const water_done = 0;
+// const plant_health = 'Fair';
 
 app.get("/api", (req, res) => {
     res.json({plantTest: ["fern", "flower", "weed"]});
@@ -38,6 +38,22 @@ app.post('/login', async (req, res) => {
         audience: process.env.GOOGLE_CLIENT_ID, 
       });
       const payload = ticket.getPayload();
+      const { sub: googleId, name, email } = payload;
+
+      // Check if the user already exists
+      const findUserQuery = 'SELECT * FROM users WHERE userId = $1';
+      const userResult = await pool.query(findUserQuery, [googleId]);
+      if (userResult.rows.length === 0) {
+          // Insert the new user if they don't exist
+          const insertUserQuery = `
+              INSERT INTO users (userId, name, email)
+              VALUES ($1, $2, $3)
+              `;
+          const newUser = await pool.query(insertUserQuery, [googleId, name, email]);
+          console.log('New user added:', newUser.rows[0]);
+      } else {
+          console.log('User already exists:', userResult.rows[0]);
+      }
       console.log(payload); 
       res.status(200).send({ message: 'User authenticated', user: payload });
     } catch (error) {
@@ -49,44 +65,87 @@ app.post('/login', async (req, res) => {
 //Add new plant to garden
 app.post('/plants', async (req, res) => {
   console.log('Request Body:', req.body);
-  const { userId, common_name, water_frequency = 1, water_done = 0, plant_health = "Good" } = req.body;
-  const plantId = getLatestPlantId() + 1;
-  const parsedUserId = parseInt(userId);
-  if (!parsedUserId) {
+  const {userId, common_name, water_frequency = 3, sunlight = 'part_shade', cycle = 'annual', hardiness = 5, indoor = true } = req.body;
+  // Validate required fields
+  if (!userId) {
     return res.status(400).send('Missing required field: userId');
-  }
-  if (!plantId) {
-    return res.status(400).send('Error generating plantId');
   }
   if (!common_name) {
     return res.status(400).send('Missing required field: common_name');
   }
-  const newPlant = { userId: parsedUserId, plantId, common_name, water_frequency, water_done, plant_health };
-  plantsList.push(newPlant);
-  res.status(201).send({ message: 'Plant added successfully', plant: newPlant });
+  try {
+    // Attempt to insert the plant and return the plantId
+    const insertPlantQuery = `
+      INSERT INTO plants (common_name, water_frequency, sunlight, cycle, hardiness, indoor)
+      VALUES ($1, $2, $3, $4, $5, $6)
+      ON CONFLICT (common_name) DO NOTHING
+      RETURNING plantId
+    `;
+    const plantResult = await pool.query(insertPlantQuery, [
+      common_name, water_frequency, sunlight, cycle, hardiness, indoor
+    ]);
+
+    let plantId;
+
+    if (plantResult.rows.length === 0) {
+      // If no rows were inserted, fetch the existing plantId
+      const fetchPlantQuery = 'SELECT plantId FROM plants WHERE common_name = $1';
+      const fetchResult = await pool.query(fetchPlantQuery, [common_name]);
+      plantId = fetchResult.rows[0].plantid;
+    } else {
+      // If the plant was inserted, retrieve the returned plantId
+      plantId = plantResult.rows[0].plantid;
+    }
+
+    // Insert into the garden table
+    const insertGardenQuery = `
+      INSERT INTO garden (userId, plantId, waterStatus, plant_health)
+      VALUES ($1, $2, $3, $4)
+    `;
+    await pool.query(insertGardenQuery, [userId, plantId, 0, 0]);
+
+    res.status(201).send({ message: 'Plant added successfully', plantId });
+  } catch (error) {
+    console.error('Error adding plant to the garden:', error);
+    res.status(500).send('Server error: Could not add plant');
+  }
 });
 
 
 
-//retrieve the whole garden
-app.get('/plants', async (req, res) => {
+  // Retrieve the whole garden
+  app.get('/plants', async (req, res) => {
     try {
       const { userId } = req.query;
-      if (userId) {
-        const plants = plantsList.filter(plant => plant.userId === parseInt(userId)); 
-        if (plants.length > 0) {
-          res.status(200).json({ message: 'Plant(s) fetched successfully', plants });
-        } else {
-          res.status(404).json({ message: 'No plants found with the given id' });
-        }
-      } else {
-        res.status(200).json({ message: 'Plants fetched successfully', plantsList });
-      } 
+
+      if (!userId) {
+        return res.status(400).json({ message: 'Missing required parameter: userId' });
+      }
+
+      // Query the database for plants in the user's garden
+      const gardenQuery = `
+        SELECT g.waterStatus, g.plant_health, 
+              p.plantId, p.common_name, p.water_frequency, p.sunlight, p.cycle, p.hardiness, p.indoor
+        FROM garden g
+        INNER JOIN plants p ON g.plantId = p.plantId
+        WHERE g.userId = $1
+      `;
+      const gardenResult = await pool.query(gardenQuery, [userId]);
+
+      if (gardenResult.rows.length === 0) {
+        return res.status(404).json({ message: 'No plants found for the given user' });
+      }
+
+      // Send the fetched plants as a response
+      res.status(200).json({
+        message: 'Plants fetched successfully',
+        plants: gardenResult.rows
+      });
     } catch (error) {
       console.error('Error fetching plants:', error);
       res.status(500).json({ message: 'Server error, could not fetch plants' });
     }
-  });
+});
 
   //delete plant from garden 
   app.delete('/plants/:plantId', async (req, res) => {
@@ -133,7 +192,7 @@ app.get('/plants', async (req, res) => {
         plant: updatedPlant,
       });
     } catch (error) {
-      console.error('Error watering plant:', error);
+      console.error('Error water_frequency plant:', error);
       res.status(500).json({ message: 'Server error, could not water plant' });
     }
   });
