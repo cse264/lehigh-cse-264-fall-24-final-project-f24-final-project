@@ -62,7 +62,7 @@ app.post('/login', async (req, res) => {
   //Add new plant to garden
   app.post('/plants', async (req, res) => {
     console.log('Request Body:', req.body);
-    const {userId, common_name, water_frequency = 3, sunlight = 'part_shade', cycle = 'annual', hardiness = 5, indoor = true } = req.body;
+    const {userId, common_name, water_frequency = Math.floor(Math.random() * 3) + 1} = req.body;
     // Validate required fields
     if (!userId) {
       return res.status(400).send('Missing required field: userId');
@@ -73,13 +73,13 @@ app.post('/login', async (req, res) => {
     try {
       // Attempt to insert the plant and return the plantId
       const insertPlantQuery = `
-        INSERT INTO plants (common_name, water_frequency, sunlight, cycle, hardiness, indoor)
-        VALUES ($1, $2, $3, $4, $5, $6)
+        INSERT INTO plants (common_name, water_frequency)
+        VALUES ($1, $2)
         ON CONFLICT (common_name) DO NOTHING
         RETURNING plantId
       `;
       const plantResult = await pool.query(insertPlantQuery, [
-        common_name, water_frequency, sunlight, cycle, hardiness, indoor
+        common_name, water_frequency
       ]);
 
       let plantId;
@@ -120,7 +120,7 @@ app.post('/login', async (req, res) => {
       // Query the database for plants in the user's garden
       const gardenQuery = `
         SELECT g.water_done, g.plant_health, 
-              p.plantId, p.common_name, p.water_frequency, p.sunlight, p.cycle, p.hardiness, p.indoor
+              p.plantId, p.common_name, p.water_frequency
         FROM garden g
         INNER JOIN plants p ON g.plantId = p.plantId
         WHERE g.userId = $1
@@ -171,32 +171,37 @@ app.post('/login', async (req, res) => {
 
     //Water the plant
     app.put('/plants/water', async (req, res) => {
-      try {
-        console.log("Request Body:", req.body);
-        const { plantId } = req.body;
-        if (!plantId) {
-          return res.status(400).json({ message: 'Valid Plant ID is required' });
-        }
-        const plantIndex = plantsList.findIndex(plant => plant.plantId === parseInt(plantId));
-        if (plantIndex === -1) {
-          return res.status(404).json({ message: 'No plant found with the given Plant ID' });
-        }
-        const updatedPlant = {
-          ...plantsList[plantIndex],
-          water_done: (plantsList[plantIndex].water_done || 0) + 1,
-        };
-        console.log(updatedPlant);
-        plantsList[plantIndex] = updatedPlant;
+      const { plantId } = req.body;
     
-        res.status(200).json({
-          message: `Plant ${plantId} has been watered`,
-          plant: updatedPlant,
-        });
+      if (!plantId) {
+        return res.status(400).json({ message: 'Valid Plant ID is required' });
+      }
+    
+      try {
+        const updateQuery = `
+          UPDATE garden 
+          SET water_done = water_done + 1 
+          WHERE plantId = $1 
+          RETURNING *
+        `;
+        const result = await pool.query(updateQuery, [plantId]);
+        const updatedPlant = result.rows[0];
+        console.log(updatedPlant);
+        if (result.rowCount > 0) {
+          res.status(200).json({ 
+            message: `Plant ${plantId} has been watered`, 
+            plant: updatedPlant
+          });
+
+        } else {
+          res.status(404).json({ message: 'No plant found with the given ID' });
+        }
       } catch (error) {
         console.error('Error watering plant:', error);
-        res.status(500).json({ message: 'Server error, could not water plant' });
+        res.status(500).send('Server error, could not water plant');
       }
     });
+    
 
 // Start Server
 const PORT = process.env.PORT || 8080;
