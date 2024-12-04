@@ -99,7 +99,7 @@ app.post('/plants', async (req, res) => {
 
     // Insert into the garden table
     const insertGardenQuery = `
-      INSERT INTO garden (userId, plantId, waterStatus, plant_health)
+      INSERT INTO garden (userId, plantId, water_done, plant_health)
       VALUES ($1, $2, $3, $4)
     `;
     await pool.query(insertGardenQuery, [userId, plantId, 0, 0]);
@@ -124,7 +124,7 @@ app.post('/plants', async (req, res) => {
 
       // Query the database for plants in the user's garden
       const gardenQuery = `
-        SELECT g.waterStatus, g.plant_health, 
+        SELECT g.water_done, g.plant_health, 
               p.plantId, p.common_name, p.water_frequency, p.sunlight, p.cycle, p.hardiness, p.indoor
         FROM garden g
         INNER JOIN plants p ON g.plantId = p.plantId
@@ -147,65 +147,85 @@ app.post('/plants', async (req, res) => {
     }
 });
 
-  //delete plant from garden 
+  // Delete a plant from the garden
   app.delete('/plants/:plantId', async (req, res) => {
     try {
       const { plantId } = req.params;
-      if (plantId) {
-        const plant = plantsList.filter(plant => plant.plantId === parseInt(plantId)); 
-        if (plant) {
-          plantList = plantList.filter(plant => plant.id != plantId)
-          res.status(200).json({ message: 'Plant(s) fetched successfully', plants });
-        } else {
-          res.status(404).json({ message: 'No plants found with the given id' });
-        }
-      } else {
-        res.status(200).json({ message: 'No id provided'});
-      } 
+
+      if (!plantId) {
+        return res.status(400).json({ message: 'Missing required parameter: plantId' });
+      }
+
+      // Delete the plant from the garden table
+      const deleteFromGardenQuery = `
+        DELETE FROM garden 
+        WHERE plantId = $1
+      `;
+      const gardenResult = await pool.query(deleteFromGardenQuery, [plantId]);
+
+      if (gardenResult.rowCount === 0) {
+        return res.status(404).json({ message: 'Plant not found in the garden' });
+      }
+
+      res.status(200).json({ message: 'Plant deleted successfully' });
     } catch (error) {
-      console.error('Error fetching plants:', error);
-      res.status(500).json({ message: 'Server error, could not fetch plants' });
+      console.error('Error deleting plant:', error);
+      res.status(500).json({ message: 'Server error, could not delete plant' });
     }
   });
 
-  //Water the plant
   app.put('/plants/water', async (req, res) => {
     try {
       console.log("Request Body:", req.body);
+  
       const { plantId } = req.body;
       if (!plantId) {
         return res.status(400).json({ message: 'Valid Plant ID is required' });
       }
-      const plantIndex = plantsList.findIndex(plant => plant.plantId === parseInt(plantId));
-      if (plantIndex === -1) {
+  
+      // Query the database to find the plant by its ID
+      const plantQuery = 'SELECT * FROM plants WHERE plantId = $1';
+      const plantResult = await pool.query(plantQuery, [plantId]);
+  
+      if (plantResult.rows.length === 0) {
         return res.status(404).json({ message: 'No plant found with the given Plant ID' });
       }
-      const updatedPlant = {
-        ...plantsList[plantIndex],
-        water_done: (plantsList[plantIndex].water_done || 0) + 1,
-      };
-      console.log(updatedPlant);
-      plantsList[plantIndex] = updatedPlant;
   
+      // Get the plant data
+      const plant = plantResult.rows[0];
+  
+      // Update the water_done field (water frequency)
+      const updatedPlant = {
+        ...plant,
+        water_done: (plant.water_done || 0) + 1,
+      };
+  
+      // Save the updated plant back to the database
+      const updateQuery = 'UPDATE plants SET water_done = $1 WHERE plantId = $2 RETURNING *';
+      const updateResult = await pool.query(updateQuery, [updatedPlant.water_done, plantId]);
+  
+      if (updateResult.rows.length === 0) {
+        return res.status(500).json({ message: 'Failed to update plant water status' });
+      }
+  
+      // Send the updated plant data back in the response
       res.status(200).json({
         message: `Plant ${plantId} has been watered`,
-        plant: updatedPlant,
+        plant: updateResult.rows[0],
       });
     } catch (error) {
-      console.error('Error water_frequency plant:', error);
+      console.error('Error watering plant:', error);
       res.status(500).json({ message: 'Server error, could not water plant' });
     }
   });
   
-  
-  
-  const getLatestPlantId = () => {
-    if (plantsList.length === 0) {
-      return 0; 
-    }
-    const latestPlant = plantsList.reduce((max, plant) => (plant.plantId > max.plantId ? plant : max), plantsList[0]);
-    return latestPlant.plantId;
-  };
+  // const getLatestPlantId = () => {
+  //   if (plantsList.length === 0) {
+  //     return 0; 
+  //   }
+  //   const latestPlant = plantsList.reduce((max, plant) => (plant.plantId > max.plantId ? plant : max), plantsList[0]);
+  //   return latestPlant.plantId;
+  // };
   
 // Routes
 //const plantRoutes = require('./routes/plants');
